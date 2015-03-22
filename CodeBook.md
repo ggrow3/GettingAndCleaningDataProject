@@ -1,5 +1,4 @@
 # GettingAndCleaningDataProject
-ourse Project for Coursera Getting and Cleaning Data
 
 #CodeBook
 
