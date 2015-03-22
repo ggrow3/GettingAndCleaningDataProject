@@ -10,6 +10,8 @@ download.zipFile <- function (fileName="dataset.zip") {
   unzip(zip.file)
 }
 
+
+run_analysis <- function() {
 # 1. Merges the training and the test sets to create one data set.
 x.set <- rbind( read.table("train/X_train.txt"), read.table("test/X_test.txt"))
 subject.set <- rbind(read.table("train/subject_train.txt"), read.table("test/subject_test.txt"))
@@ -29,7 +31,7 @@ names(x.set) <- gsub("BodyBody","Body",names(x.set))
 # 3. Uses descriptive activity names to name the activities in the data set
 names(activity.set) <- "activity"
 activity <- read.table("activity_labels.txt")
-activity[, 2] = gsub("_", "-", tolower(as.character(activity[, 2])))
+activity[, 2] = gsub("_", "", tolower(as.character(activity[, 2])))
 activity.set[,1] = activity[activity.set[,1],2]
 
 # 4. Appropriately labels the data set with descriptive activity names. 
@@ -38,21 +40,23 @@ tidyData<- cbind(subject.set, activity.set, x.set)
 write.table(tidyData, "TidyData.txt", row.names=FALSE)
 
 # 5. Creates a second, independent tidyData set with the average of each variable for each activity and each subject. 
-numActivities <- nrow(activity)
-numCols <- dim(tidyData)[2]
+countActivities <- nrow(activity)
+countCols <- dim(tidyData)[2]
 uniqueSubjects <- unique(subject.set)[,1]
-numSubjects <- length(uniqueSubjects)
+countSubjects <- length(uniqueSubjects)
 
-tidyData.avg <- tidyData[1:(numSubjects*numActivities), ]
+tidyData.avg <- tidyData[1:(countSubjects*countActivities), ]
 
 row = 1
-for (sub in 1:numSubjects) {
-  for (act in 1:numActivities) {
+for (sub in 1:countSubjects) {
+  for (act in 1:countActivities) {
     tidyData.avg[row, 1] = uniqueSubjects[sub]
     tidyData.avg[row, 2] = activity[act, 2]
     indexes <- tidyData[tidyData$subject==sub & tidyData$activity==activity[act, 2], ]
-    tidyData.avg[row, 3:numCols] <- colMeans(indexes[, 3:numCols])
+    tidyData.avg[row, 3:countCols] <- colMeans(indexes[, 3:countCols])
     row = row+1
   }
 }
 write.table(tidyData.avg, "TidyDataAvg.txt", row.names=FALSE)
+}
+runanalysis()
